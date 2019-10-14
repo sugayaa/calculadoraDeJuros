@@ -66,7 +66,7 @@ double newfindRoot(double left, double right, double fA, double* ins, i16 s, dou
 
     i32 i = 0;
 
-    while( (fabs((*f)( m, fA, ins, s )) > 10e-13) and i < 0x7fffffff )
+    while( (fabs((*f)( m, fA, ins, s )) > 10e-13) and i < 0x0fffffff )
     {
         if( (*f)( left, fA, ins, s ) * (*f)( m, fA, ins, s ) > 0 )
         {
@@ -79,10 +79,20 @@ double newfindRoot(double left, double right, double fA, double* ins, i16 s, dou
 
         m = ( right + left )/ 2;
         if( i == 0x7ffffffd or i == 0x7ffffffe )
-            printf("O m está travado em : %.16e\n", m);
+            printf("O m está travado em : %.16e", m);
+        
+        /*
+        if( i == 0x00000fff )
+            printf(". "); fflush(stdin);
+        if( i == 0x000fffff )
+            printf(". "); fflush(stdin);
+        if( i == 0x7ffffffe )
+            printf(". "); fflush(stdin);
+        */
+
         i += 1;
     }
-
+    printf("\n");
     if(m == oleft || m == oright)
         printf("Apparently the range was not properly set.");
 
@@ -170,8 +180,11 @@ double findA(double left, double right, double J, double (*f)(double, double))
     return m;
 }
 
-void problema1()
+void problema1( void )
 {
+    
+    printf("Problema 1:\n");
+
     u16 size = 12;
     double aVista = 1559.15;
     double* aPrazo;
@@ -195,25 +208,23 @@ void problema1()
     //double A = (aumentoAnual - 1)*100;
     //printf("Portanto A = %.16e\n", A);
 
-    double Jf = findRoot(0, 100, fJf1);
-    printf("Taxa de juros mensais com valor futuro (JF) = %1.15lf\%\n", Jf);
 
     double J = newfindRoot(0, 100, aVista, aPrazo, size, fJ);
     printf("Taxa de juros mensais (J) = %1.15lf\%\n", J);
  
-    double J2 = findRoot(0, 100, fJ1);
-    printf("Taxa de juros mensais (J) = %1.15lf\%\n", J2);
-
-
-
-    double A2 = findA(0, 100, J, relacaoJurosMensaleAnual);
-    printf("Taxa de juros anual (A)   = %1.15lf\%\n\n\n", A2);
+    double A = findA(0, 100, J, relacaoJurosMensaleAnual);
+    printf("Taxa de juros anual (A)   = %1.15lf\%\n\n\n", A);
     
     free( aPrazo );
+
+    printf("Fim problema 1 ~\n\n\n");
 }
 
-void problema2()
+void problema2( void )
 {
+
+    printf("Problema 2:\n");
+
     double valorAVista = 129000;
     double taxaAVista  = 2;
 
@@ -236,6 +247,74 @@ void problema2()
     double J = newfindRoot(0, 100, valorAVista, pagamentoAPrazo, size, fJ);
     printf("Taxa de juros mensais (J) = %1.15lf\%\n", J);
 
+    if ( J > 2 )
+    {
+        printf("Vale mais a pena pagar à vista. A taxa de juros é maior que 2\% ao mês\n");
+    }
+    else
+    {
+        printf("Vale mais a pena pagar em parcelas. A taxa de juros é menor que 2% ao mês\n");
+    }
+
+    printf("Fim problema 2~\n\n\n");
+
+}
+
+void problema3( void )
+{
+    printf("Problema 3:\n");
+
+    double aVista = 889.18;
+    double* aPrazo;
+    i16 sz = 62;
+    aPrazo = (double*) malloc(sizeof(double) * sz);
+
+    for( i16 i = 0; i < sz - 1; i++ )
+    {
+        aPrazo[i] = 48.81;
+    }
+
+    aPrazo[61] = 1000;
+
+    double J = newfindRoot(0, 100, aVista, aPrazo, sz, fJ);
+    printf("Taxa de juros mensais (J) = %1.15e\%\n", J);
+
+    double A = findA(0, 100, J, relacaoJurosMensaleAnual);
+    printf("Taxa de juros anual (A)   = %2.15e\%\n\n\n", A);
+    
+    free( aPrazo );
+
+    printf("Fim problema 3 ~\n\n\n");
+
+
+}
+
+void problema4( void )
+{
+    printf("Problema 4:\n");
+
+    double aVista = 1207.52;
+    double* aPrazo;
+    i16 sz = 62;
+    aPrazo = (double*) malloc(sizeof(double) * sz);
+
+    for( i16 i = 0; i < sz - 1; i++ )
+    {
+        aPrazo[i] = 48.81;
+    }
+
+    aPrazo[61] = 1000;
+
+    double J = newfindRoot(0, 100, aVista, aPrazo, sz, fJ);
+    printf("Taxa de juros mensais (J) = %1.15e\%\n", J);
+
+    double A = findA(0, 100, J, relacaoJurosMensaleAnual);
+    printf("Taxa de juros anual (A)   = %2.15e\%\n\n\n", A);
+    
+    free( aPrazo );
+
+    printf("Fim problema 4 ~\n\n\n");
+
 
 }
 
@@ -244,6 +323,8 @@ int32_t main(void){
 
     problema1();
     problema2();
+    problema3();
+    problema4();
 
     return 0;
 }
